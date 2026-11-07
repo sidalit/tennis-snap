@@ -1,0 +1,68 @@
+name: tennis
+base: core26
+version: '0.8.0'
+title: tennis
+icon: snap/gui/tennis.png
+summary: Print stylish CSV, JSON and SQLite tables in your terminal
+description: |
+  tennis prints CSV, TSV, JSON and SQLite data as colorful tables that fit
+  your terminal. It picks a light or dark theme from your terminal colors,
+  formats numbers, and offers titles, row numbers, zebra stripes, sorting,
+  filtering and a quick --peek summary.
+
+  **Examples**
+
+     tennis data.csv
+     tennis data.csv --title "Sales" --zebra --row-numbers
+     tennis app.db --table users
+     cat data.json | tennis
+
+  **File access**
+
+  tennis can read files in your home directory and from standard input. To
+  also read files on USB drives and other removable media (/media, /mnt), run:
+
+     sudo snap connect tennis:removable-media
+license: MIT
+grade: stable
+confinement: strict
+website: https://github.com/gurgeous/tennis
+source-code:
+  - https://github.com/gurgeous/tennis
+  - https://github.com/sidalit/tennis-snap
+issues:
+  - https://github.com/gurgeous/tennis/issues
+  - https://github.com/sidalit/tennis-snap/issues
+contact: https://github.com/sidalit/tennis-snap/issues
+
+platforms:
+  amd64:
+  arm64:
+
+apps:
+  tennis:
+    command: bin/tennis
+    completer: share/bash-completion/completions/tennis
+    plugs:
+      - home
+      - removable-media
+
+parts:
+  tennis:
+    plugin: rust
+    source: https://github.com/gurgeous/tennis.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
+    source-depth: 1
+    rust-channel: stable
+    build-packages:
+      - build-essential
+      # build.rs embeds the Git revision in --version.
+      - git
+    override-build: |
+      craftctl default
+      install -Dm644 extra/tennis.bash \
+        "$CRAFT_PART_INSTALL/share/bash-completion/completions/tennis"
+      install -Dm644 LICENSE -t "$CRAFT_PART_INSTALL/usr/share/doc/tennis"
+    # SQLite input runs the sqlite3 CLI; --pager runs less from the core26 base.
+    stage-packages:
+      - sqlite3
