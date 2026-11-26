@@ -1,6 +1,6 @@
 name: tennis
 base: core26
-version: '0.8.0'
+version: '0.8.1'
 title: tennis
 icon: snap/gui/tennis.png
 summary: Print stylish CSV, JSON and SQLite tables in your terminal
